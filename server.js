@@ -15,8 +15,8 @@ app.use(bodyParser.json())
 
 // routes
 
-const subscribersRouter = require('./routes/subscribers')
-app.use('/subscribers', subscribersRouter)
+const subscribersRouter = require('./routes/tasks')
+app.use('/tasks', taskRouter)
 
 // starting application on specified port
 app.listen(6000, () => console.log('Server started on port 6000...'))
