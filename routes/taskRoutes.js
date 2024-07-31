@@ -3,8 +3,9 @@ const express = require('express')
 const router = express.Router()
 const Task = require('../models/task')
 
+
 router.route('/')
-  .get(async (res) => {
+  .get(async (req, res) => {
     try {
       const tasks = await Task.find()
       res.json(tasks)
@@ -30,7 +31,7 @@ router.route('/')
     }
   })
   
-  .delete(async (res) => {
+  .delete(async (req, res) => {
     try {
       await Task.deleteMany()
       res.status(200).json({ message: "All tasks deleted!" })
@@ -39,13 +40,13 @@ router.route('/')
     }
   })
   
-  router.route('/:id')
-  
+// GET PATCH and DELETE singular items
+  router.route('/:id')  
   .get(async (req,res) => {
     try {
       // await Task.findById(req.params.id)
       const foundTask = await Task.findById(req.params.id) 
-      res.status(200).json()
+      res.status(200).json(foundTask)
     } catch (err) {
       res.status(400).json({ message: err.message })
     }
@@ -88,7 +89,7 @@ router.route('/')
   .delete(async (req, res) => {
     // DELETE logic
     try {
-      await Task.findByIdAndRemove(req.params.id)
+      await Task.findByIdAndDelete(req.params.id)
       res.json({ message: 'Task deleted' })
     } catch (err) {
       res.status(500).json({ message: err.message })
