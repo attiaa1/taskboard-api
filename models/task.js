@@ -5,14 +5,22 @@ const taskSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    subscribedToChannel: {
+    description: {
         type: String,
-        required: true
+        required: false
     },
-    subscribedDate: {
+    dueDate: {
+        type: Date,
+        required: false
+    },
+    completed: {
+        type: Boolean,
+        default: false
+    },
+    priority: {
         type: String,
-        required: true,
-        default: Date.now
+        enum: ['Low', 'Medium', 'High'],
+        default: 'Low'
     }
 })
 
