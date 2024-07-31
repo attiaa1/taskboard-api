@@ -21,7 +21,12 @@ const taskSchema = new mongoose.Schema({
         type: String,
         enum: ['Low', 'Medium', 'High'],
         default: 'Low'
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 })
 
-module.exports = mongoose.model('Subscriber', taskSchema)
+module.exports = mongoose.model('Task', taskSchema)

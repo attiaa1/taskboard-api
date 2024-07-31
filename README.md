@@ -8,6 +8,7 @@
 ```bash
     DATABASE_URL='mongodb://test:test@localhost:27017/subscribers?authSource=admin'
     PORT='3000' # Will default to 6000 if not defined in your .env file
+    JWT_SECRET = # I would use something like 'openssl rand -hex 64' to generate a secure random key here
 ```
 - Run nodemon to start serving at the specified port
 ``` npm run dev ```

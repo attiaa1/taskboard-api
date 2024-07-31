@@ -1,8 +1,12 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-
 const mongoose = require('mongoose');
+
+const taskRoutes = require('./routes/taskRoutes');
+const authRoutes = require('./routes/authRoutes');
+const jwt = require('jsonwebtoken')
+const authMiddleware = require('./middleware/authMiddleware')
 
 // connecting to database
 mongoose.connect(process.env.DATABASE_URL)
@@ -13,8 +17,8 @@ mongoose.connect(process.env.DATABASE_URL)
 app.use(express.json());
 
 // routes
-const taskRoutes = require('./routes/taskRoutes');
-app.use('/tasks', taskRoutes);
+app.use('/auth', authRoutes)
+app.use('/tasks', authMiddleware, taskRoutes);
 
 // error handling middleware
 app.use((err, req, res, next) => {

@@ -7,7 +7,7 @@ const Task = require('../models/task')
 router.route('/')
   .get(async (req, res) => {
     try {
-      const tasks = await Task.find()
+      const tasks = await Task.find({ userId: req.user.id })
       res.json(tasks)
     } catch (err) {
       res.status(500).json({ message: err.message })
@@ -20,7 +20,8 @@ router.route('/')
       description: req.body.description,
       dueDate: req.body.dueDate,
       completed: req.body.completed,
-      priority: req.body.priority
+      priority: req.body.priority,
+      userId: req.user.id
     })
 
     try {
@@ -33,7 +34,7 @@ router.route('/')
   
   .delete(async (req, res) => {
     try {
-      await Task.deleteMany()
+      await Task.deleteMany({ userId: req.user.id })
       res.status(200).json({ message: "All tasks deleted!" })
     } catch (err) {
       res.status(400).json({ message: err.message })
@@ -41,59 +42,40 @@ router.route('/')
   })
   
 // GET PATCH and DELETE singular items
-  router.route('/:id')  
-  .get(async (req,res) => {
-    try {
-      // await Task.findById(req.params.id)
-      const foundTask = await Task.findById(req.params.id) 
-      res.status(200).json(foundTask)
-    } catch (err) {
-      res.status(400).json({ message: err.message })
-    }
-  })
+router.route('/:id')
+.get(async (req, res) => {
+  try {
+    const foundTask = await Task.findOne({ _id: req.params.id, userId: req.user.id }); // Check ownership
+    if (!foundTask) return res.status(404).json({ message: 'Task not found' });
+    res.status(200).json(foundTask);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+})
+.patch(async (req, res) => {
+  try {
+    const task = await Task.findOne({ _id: req.params.id, userId: req.user.id }); // Check ownership
+    if (!task) return res.status(404).json({ message: 'Task not found' });
 
-  .patch(async (req, res) => {
-    // PATCH logic
-    try {
-      const task = await Task.findById(req.params.id)
+    Object.keys(req.body).forEach(key => {
+      task[key] = req.body[key];
+    });
 
-      // if (req.body.name != null) {
-      //   task.name = req.body.name
-      // }
-      // if (req.body.description != null) {
-      //   task.description = req.body.description
-      // }
-      // if (req.body.dueDate != null) {
-      //   task.dueDate = req.body.dueDate
-      // }
-      // if (req.body.completed != null) {
-      //   task.completed = req.body.completed
-      // }
-      // if (req.body.priority != null) {
-      //   task.priority = req.body.priority
-      // }
+    const updatedTask = await task.save();
+    res.json(updatedTask);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+})
+.delete(async (req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({ _id: req.params.id, userId: req.user.id }); // Check ownership
+    if (!task) return res.status(404).json({ message: 'Task not found' });
 
-      // Better method than using multiple if statements
-      Object.keys(req.body).forEach(key => {
-        task[key] = req.body[key]
-      })
+    res.json({ message: 'Task deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
-      const updatedTask = await task.save()
-      res.json(updatedTask)
-
-    } catch (err) {
-      res.status(500).json({ message: err.message })
-    }
-  })
-
-  .delete(async (req, res) => {
-    // DELETE logic
-    try {
-      await Task.findByIdAndDelete(req.params.id)
-      res.json({ message: 'Task deleted' })
-    } catch (err) {
-      res.status(500).json({ message: err.message })
-    }  
-  })
-
-module.exports = router
+module.exports = router;
