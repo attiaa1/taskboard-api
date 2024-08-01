@@ -1,36 +1,4 @@
-#!/bin/bash
-# Test scripts for API development 
-# POST requests
-http POST http://localhost:6000/tasks name='Task Alpha' description='Alpha task description' dueDate='2024-07-31' completed=false priority='High'
-
-http POST http://localhost:6000/tasks name='Task Beta' description='Beta task description' dueDate='2024-08-01' completed=true priority='Medium'
-
-http POST http://localhost:6000/tasks name='Task Gamma' description='Gamma task description' dueDate='2024-08-02' completed=false priority='Low'
-
-http POST http://localhost:6000/tasks name='Task Delta' description='Delta task description' dueDate='2024-08-03' completed=true priority='High'
-
-http POST http://localhost:6000/tasks name='Task Epsilon' description='Epsilon task description' dueDate='2024-08-04' completed=false priority='Medium'
-
-http GET localhost:6000/tasks
-
-http DELETE localhost:6000/tasks/66a992d654bb884aa09a9e44
-
-http GET localhost:6000/tasks
-
-http DELETE localhost:6000/66a992b754bb884aa09a9e3c
-
-http GET localhost:6000/tasks
-
-http DELETE localhost:6000/tasks/66a992be54bb884aa09a9e3e
-
-http GET localhost:6000/tasks
-
-http DELETE localhost:6000/tasks/66a992c654bb884aa09a9e40
-
-http GET localhost:6000/tasks
-
-http POST localhost:6000/tasks name='Math Homework' completed='false' priority='Low' description='Algebra II and Trigonometry HW, PreCalc due next Wednesday' dueDate='2024-08-18'
-
-http PATCH localhost:6000/tasks/66a99721e50c289a7d5834df priority='High'
-
-http PATCH localhost:6000/tasks/66a99721e50c289a7d5834df completed='true'
+http POST localhost:6000/register username='username' password='password'
+http POST localhost:6000/auth/login username='username' password='password'
+export TOKEN=$(http POST localhost:6000/auth/login username='username' password='password' | jq --raw-output '.token')
+http -v GET localhost:6000/tasks Authorization:"Bearer $TOKEN"
