@@ -20,6 +20,7 @@ router.route('/')
       dueDate: req.body.dueDate,
       completed: req.body.completed,
       priority: req.body.priority,
+      column: req.body.column,
       userId: req.user.id
     })
 

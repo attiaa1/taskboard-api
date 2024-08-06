@@ -22,6 +22,11 @@ const taskSchema = new mongoose.Schema({
         enum: ['Low', 'Medium', 'High'],
         default: 'Low'
     },
+    column: {
+        type: String,
+        enum: ['To Do', 'In Progress', 'Done'],
+        required: true
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
